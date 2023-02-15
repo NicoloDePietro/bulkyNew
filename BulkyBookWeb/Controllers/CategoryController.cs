@@ -29,6 +29,10 @@ namespace BulkyBookWeb.Controllers
         [ValidateAntiForgeryToken]  //evita che l'utente lo crei dall'url
         public IActionResult Create(Category obj)
         {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError(nameof(obj.Name), $"The name of property {nameof(obj.DisplayOrder)} cannot exactly match the name of property { nameof(obj.Name)}");
+            }
             if (ModelState.IsValid) //validazione
             {
                 _db.Categories.Add(obj);
