@@ -94,10 +94,14 @@ namespace BulkyBookWeb.Controllers
             }
             return View(categoryFromDb);
         }
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int id)
+        public IActionResult DeletePost(int id, [Bind("Id")] Category category)
         {
+            if (id != category.Id)
+            {
+                return NotFound();
+            }
             var obj = _db.Categories.Find(id);
             if (obj == null)
             {
