@@ -22,4 +22,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration" Version="7.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BulkyBook.DataAccess1\BulkyBook.DataAccess1.csproj" />
+    <ProjectReference Include="..\BulkyBook.Models1\BulkyBook.Models1.csproj" />
+  </ItemGroup>
+
 </Project>
