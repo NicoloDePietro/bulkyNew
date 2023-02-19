@@ -60,7 +60,7 @@ namespace BulkyBookWeb.Controllers
             //var categoryFromDb = _db.Categories.Find(id);
             //var categoryFromDbFirst = _db.GetFirstOrDefault(u => u.Id == id);
 
-            var categoryFromDbFirst = _db.Categories.FirstOrDefault(u => u.Id == id);
+            var categoryFromDbFirst = _db.GetFirstOrDefault(u => u.Id == id);
 
             if (categoryFromDbFirst == null)
             {
@@ -98,7 +98,7 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
             }
             //var categoryFromDb = _db.Categories.Find(id);
-            var categoryFromDbFirst = _db.Categories.FirstOrDefault(u => u.Id == id);
+            var categoryFromDbFirst = _db.GetFirstOrDefault(u => u.Id == id);
             if (categoryFromDbFirst == null)
             {
                 return NotFound();
@@ -106,9 +106,9 @@ namespace BulkyBookWeb.Controllers
             return View(categoryFromDbFirst);
 
         }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-
         public IActionResult DeletePost(int id, [Bind("Id")] Category category)
         {
             if (id != category.Id)
@@ -116,18 +116,20 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
             }
             //var obj = _db.Categories.Find(id);
-            var categoryFromDbFirst = _db.Categories.FirstOrDefault(u => u.Id == id);
+            var categoryFromDbFirst = _db.GetFirstOrDefault(u => u.Id == id);
             if (categoryFromDbFirst == null)
             {
                 return NotFound();
             }
-            _db.Categories.Remove(categoryFromDbFirst);
+            //_db.Categories.Remove(categoryFromDbFirst);
             //if (obj == null)
             //{
             //    return NotFound();
             //}
             //_db.Categories.Remove(obj);
-            _db.SaveChanges();
+            //_db.SaveChanges();
+            _db.Remove(categoryFromDbFirst);
+            _db.Save();
             TempData["success"] = "Category created successfully";
             return RedirectToAction(nameof(Index));
         }
