@@ -133,7 +133,5 @@ namespace BulkyBookWeb.Controllers
             TempData["success"] = "Category created successfully";
             return RedirectToAction(nameof(Index));
         }
-
     }
-
 }
