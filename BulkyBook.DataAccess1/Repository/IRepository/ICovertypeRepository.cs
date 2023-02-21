@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BulkyBook.Models1;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace BulkyBook.DataAccess1.Repository.IRepository
 {
-    public interface IUnitOfWork
+    public interface ICoverTypeRepository : IRepository<CoverType>
     {
-        ICategoryRepository Category { get; }
-        ICoverTypeRepository CoverType { get; }
-
-        void Save();
+        void Update(CoverType coverType);
 
     }
+
 }
