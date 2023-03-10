@@ -2,6 +2,9 @@
 using BulkyBook.Models1;
 using Microsoft.AspNetCore.Mvc;
 using BulkyBook.DataAccess1.Repository.IRepository;
+using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBookWeb.Controllers
 {
@@ -21,56 +24,49 @@ namespace BulkyBookWeb.Controllers
             IEnumerable<CoverType> objCoverTypeList = _unitOfWork.CoverType.GetAll();
             return View(objCoverTypeList);
         }
-        //GET
-        public IActionResult Create()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(CoverType obj)
-        {
 
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.CoverType.Add(obj);
-                _unitOfWork.Save();
-                TempData["success"] = "CoverType created successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            return View(obj);
-
-        }
 
         //GET edit
-        public IActionResult Edit(int? id)
+        public IActionResult Upsert(int? id)
 		{
-			if (id == null || id == 0)
-			{
-				return NotFound();
-			}
-            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
 
-
-            if (categoryFromDbFirst == null)
+            Product product = new();
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(
+            u => new SelectListItem
             {
-                return NotFound();
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
+            IEnumerable<SelectListItem> CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
+            u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
+
+            if (id == null || id == 0)
+			{
+                //esempio di uso di ViewBag
+                ViewBag.CategoryList = CategoryList;
+                //esempio di uso di ViewData
+                ViewData["CoverTypeList"] = CoverTypeList
+                return View(product);
             }
-            return View(categoryFromDbFirst);
+            return View(product);
 
         }
 
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CoverType obj)
+        public IActionResult Upsert(Product obj)
         {
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.CoverType.Update(obj);
+                _unitOfWork.Product.Update(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "CoverType updated successfully";
+                TempData["success"] = "Product updated successfully";
                 return RedirectToAction(nameof(Index));
             }
             return View(obj);
