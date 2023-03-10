@@ -5,6 +5,7 @@ using BulkyBook.DataAccess1.Repository.IRepository;
 using Newtonsoft.Json.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using BulkyBook.Models1.ViewModels;
 
 namespace BulkyBookWeb.Controllers
 {
@@ -30,29 +31,27 @@ namespace BulkyBookWeb.Controllers
         public IActionResult Upsert(int? id)
 		{
 
-            Product product = new();
-            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(
-            u => new SelectListItem
+            ProductVM productVM = new()
             {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
-            IEnumerable<SelectListItem> CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
-            u => new SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id.ToString()
-            });
+                Product = new Product(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+            };
+
 
             if (id == null || id == 0)
 			{
-                //esempio di uso di ViewBag
-                ViewBag.CategoryList = CategoryList;
-                //esempio di uso di ViewData
-                ViewData["CoverTypeList"] = CoverTypeList
-                return View(product);
+                return View(productVM);
             }
-            return View(product);
+            return View(productVM);
 
         }
 
