@@ -57,11 +57,23 @@ namespace BulkyBookWeb.Controllers
 
 
             if (id == null || id == 0)
-			{
+            {
+                //restituisce una view per la creazione di un nuovo prodotto
                 return View(productVM);
             }
-            return View(productVM);
+            else
+            {
+                var productInDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                if (productInDb != null)
+                {
+                    productVM.Product = productInDb;
+                    //restituisce una view per l'aggiornamento del prodotto
+                    //questa view riceve un productVM con tutti i campi di Product
+                    return View(productVM);
+                }
 
+                return View(productVM);
+            }
         }
 
         //POST
@@ -80,6 +92,16 @@ namespace BulkyBookWeb.Controllers
                     string fileName = Guid.NewGuid().ToString();
                     var uploadDir = Path.Combine(wwwRootPath, "images", "products");
                     var fileExtension = Path.GetExtension(file.FileName);
+                    //nel caso di upload dell'immagine del prodotto, il precedente file, se esiste, deve essere rimosso
+                    if (obj.Product.ImageUrl != null)
+                    {
+                        var oldImagePath =
+                       Path.Combine(wwwRootPath, obj.Product.ImageUrl.TrimStart(Path.DirectorySeparatorChar));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
                     var filePath = Path.Combine(uploadDir, fileName + fileExtension);
                     var fileUrlString = filePath[wwwRootPath.Length..].Replace(@"\\", @"\");
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -88,7 +110,16 @@ namespace BulkyBookWeb.Controllers
                     }
                     obj.Product.ImageUrl = fileUrlString;
                 }
-                _unitOfWork.Product.Add(obj.Product);
+                if (obj.Product.Id == 0)//new Product
+                {
+                    _unitOfWork.Product.Add(obj.Product);
+                    TempData["success"] = "Product created successfully";
+                }
+                else //update exsisting Product
+                {
+                    _unitOfWork.Product.Update(obj.Product);
+                    TempData["success"] = "Product updated successfully";
+                }
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction(nameof(Index));
