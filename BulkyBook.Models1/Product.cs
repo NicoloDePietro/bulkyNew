@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+    using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,11 +36,14 @@ namespace BulkyBook.Models1
         public int CategoryId { get; set; }
         //https://www.entityframeworktutorial.net/code-first/foreignkey-dataannotations-attribute-in-codefirst.aspx
         //in questo caso l'annotazione non sarebbe necessaria perché i nomi delle chiavi esterne e delle chiavi primarie già rispettano le convenzioni di EF Core
-         [ForeignKey("CategoryId")]
+        [ForeignKey("CategoryId")]
+        [ValidateNever]
         public Category Category { get; set; } = null!;
         [Required]
         public int CoverTypeId { get; set; }
+        [ValidateNever]
         public CoverType CoverType { get; set; } = null!;
+
     }
 
 }
