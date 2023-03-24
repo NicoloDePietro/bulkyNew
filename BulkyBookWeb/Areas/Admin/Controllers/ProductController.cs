@@ -21,21 +21,15 @@ namespace BulkyBookWeb.Controllers
             _unitOfWork = unitOfWork;
             _hostEnvironment = hostEnvironment;
         }
-
+        
         //GET
         public IActionResult Index()
         {
             return View();
         }
 
-        #region APICALLS
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
-            return Json(new { data = productList });
-        }
-        #endregion
+
+        
         //GET edit
         public IActionResult Upsert(int? id)
 		{
@@ -128,42 +122,76 @@ namespace BulkyBookWeb.Controllers
         }
 
         //GET
+        
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null || id == 0)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+        //    if (categoryFromDbFirst == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(categoryFromDbFirst);
+
+        //}
+
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult DeletePost(int id, [Bind("Id")] Category category)
+        //{
+        //    if (id != category.Id)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+
+        //    if (categoryFromDbFirst == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _unitOfWork.Category.Remove(categoryFromDbFirst);
+        //    _unitOfWork.Save();
+        //    TempData["success"] = "Category created successfully";
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        #region APICALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+            return Json(new { data = productList });
+        }
+
+        [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            if (id == null || id == 0)
+            var objFromDbFirst = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            if (objFromDbFirst == null)//l'oggetto con l'id specificato non è stato trovato
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
-            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
-            if (categoryFromDbFirst == null)
+            else //l'oggetto con l'id specificato è stato trovato
             {
-                return NotFound();
+                if (objFromDbFirst.ImageUrl != null) //l'oggetto ha un ImageUrl!=null
+                {
+                    var oldImagePath = Path.Combine(_hostEnvironment.WebRootPath,
+                   objFromDbFirst.ImageUrl.TrimStart(Path.DirectorySeparatorChar));
+                    if (System.IO.File.Exists(oldImagePath))//se il file corrispondente all'ImageUrl esiste va eliminato
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+                _unitOfWork.Product.Remove(objFromDbFirst);
+                _unitOfWork.Save();
+                return Json(new { success = true, message = "Delete Successful" });
             }
-            return View(categoryFromDbFirst);
-
         }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int id, [Bind("Id")] Category category)
-        {
-            if (id != category.Id)
-            {
-                return NotFound();
-            }
-            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
-
-            if (categoryFromDbFirst == null)
-            {
-                return NotFound();
-            }
-            _unitOfWork.Category.Remove(categoryFromDbFirst);
-            _unitOfWork.Save();
-            TempData["success"] = "Category created successfully";
-            return RedirectToAction(nameof(Index));
-        }
-
-
+        #endregion
 
     }
 }
