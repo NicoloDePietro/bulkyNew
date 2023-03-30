@@ -47,10 +47,11 @@
                         </li>
 
                     </ul>
-                    <form class="d-flex">
+                    <partial name="_LoginPartial" />
+                    @*<form class="d-flex">
                         <input class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>
+                    </form>*@
                 </div>
             </div>
         </nav>
@@ -101,6 +102,11 @@
             integrity="sha256-5WYg3s9NxGKR2MpEBTy0QMT3Gvgxl3yKjbW4l0CfUUY="
             crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.2/datatables.min.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/Buttons-2.3.4/js/dataTables.buttons.js"></script>
+    <script type="text/javascript" src="~/lib/DataTables/Select-1.6.0/js/dataTables.select.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.4/js/dataTables.buttons.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.6.0/js/dataTables.select.js"></script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
